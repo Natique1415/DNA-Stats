@@ -2,17 +2,22 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 void draw_dna(string seq);
 void space(int no_of_space);
+void center_text(string text);
 
 int valid_dna(string seq);
 int hydrogen_bonds(string seq);
 int nucleotide_count(string seq);
+int console_width();
 
 int main()
 {
 
+    space(2);
     string sequence;
     while (1)
     {
@@ -24,13 +29,13 @@ int main()
 
     space(2);
 
-    printf("Options\n");
-    printf("[1] Draw DNA\n");
-    printf("[2] Number of Phosphodiester Bond(s) Present\n");
-    printf("[3] Number of Glycosidic Bond(s) Present\n");
-    printf("[4] Number of Ribose Sugar(s) Present\n");
-    printf("[5] Number of Hydrogen Bond(s) Present\n");
-    printf("[6] Quit");
+    center_text("Options");
+    center_text("[1] Draw DNA");
+    center_text("[2] Number of Phosphodiester Bond(s) Present");
+    center_text("[3] Number of Glycosidic Bond(s) Present");
+    center_text("[4] Number of Ribose Sugar(s) Present");
+    center_text("[5] Number of Hydrogen Bond(s) Present");
+    center_text("[6] Quit");
 
     space(2);
 
@@ -75,9 +80,28 @@ int main()
 
         else if (choice == 6)
         {
+            space(1);
+            printf("Twist of fate? Nah, it’s just my DNA.");
+            space(2);
             break;
         }
     }
+}
+
+int console_width()
+{
+    struct winsize w;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
+        return 80;
+    return w.ws_col;
+}
+
+void center_text(string text)
+{
+    int padding = (console_width() - strlen(text)) / 2;
+    if (padding < 0)
+        padding = 0;
+    printf("%*s%s\n", padding, "", text);
 }
 
 void draw_dna(string seq)
